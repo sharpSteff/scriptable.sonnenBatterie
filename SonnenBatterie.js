@@ -1,9 +1,12 @@
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: green; icon-glyph: magic;
 /*
 These must be at the very top of the file. Do not edit.
-sonnenbatterie.js V4.02
+sonnenbatterie.js
 Run Script with Scriptable.
 Parameter use by Scriptable
-10C.Thomas Burchert, MIT-Lizenz; paypal.me/10CSoftware 
+Special thanks to Thomas Burchert, MIT-Lizenz;
 Script/Widget nutzt die REST-API der sonnenBatterie
 *** Beschreibung: *********************************************
 Das Programm/Widget stellt eine Datenübersicht als Widget zur 
@@ -40,7 +43,7 @@ Das Script schreibt die aktuellen Daten der folgenden API-End-
 points nach jedem Lesezyklus als JSON-Dateien in die iCloud oder
 in den Local-Bereich der Speichers, steuerbar über den Parameter:
 fileManagerMode = LOCAL/ICLOUD
-- /api/v2/latestdata, /api/v2/status, /api/battery, /api/ios
+- /api/v2/latestdata, /api/v2/status, /api/v2/battery, /api/v2/io
 *** Prokolldateien ********************************************
 Die folgenden Protokolldateien werden als JSON-Dateien erzeugt:
 - MonitoringData.json, ausgewählte Monitoring-Daten der Batterie
@@ -55,14 +58,14 @@ werden die Betriebsdaten wieder im Farbmodus angezeigt.
 // Parameter  Input here===================================
 // Hier bitte die Parameter hier eingeben
 
-const IP = "999.999.999.99";
-const Token = "xxxxxxx-xxxxx-xxxx-xxxx-xxxxxxxxxxxx";
+const IP = "999.999.999.999";
+const Token = "xxxxxxxxxxxxxxxx"
 const BatteryNumber = '1'; // it's the Battery Number for Multidevice-Installation
 const defaultFontSize = 10; // default Font Size for Output
 const fileManagerMode = 'ICLOUD'; // default is ICLOUD. If you don't use iCloud Drive use option LOCAL
 
-let setLogDataSave = 'yes'; // "yes" activate the LogData-Report, "no" deactivate the it
-let setApiDataSave = 'yes'; // "yes" activate Saving API-Data, "no" deactivate it
+let setLogDataSave = 'no'; // "yes" activate the LogData-Report, "no" deactivate the it
+let setApiDataSave = 'no'; // "yes" activate Saving API-Data, "no" deactivate it
 
 // Stop edit from this point
 // Ab hier keine Änderungen mehr vornahmen!
@@ -502,8 +505,17 @@ async function createWidget(items) {
   else { stateProd = "🔆" }
 
   // Check OnGrid state
-  if (state.SystemState == "OnGrid") { stateOnGrid = '🔌' }
-  else { stateOnGrid = '❌' }
+  switch (state.SystemState) {
+    case "OnGrid":
+      stateOnGrid = '🔌'
+      break;
+    case "Standby":
+      stateOnGrid = '⏾'
+      break;  
+    default:
+      stateOnGrid = '❌'
+      break;
+  }
 
   let now = state.Timestamp
   let timeLabel = now.substr(11, 5);
